@@ -6,6 +6,8 @@ import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.data.Stat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -14,6 +16,8 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 public class SingleInstance {
+    private final static Logger logger = LoggerFactory.getLogger(SingleInstance.class);
+
     public static void main(String[] args) throws Exception {
         final CuratorFramework client = Connector.newClient();
         new Thread(new Runnable() {
@@ -21,9 +25,9 @@ public class SingleInstance {
             public void run() {
                 try {
                     join(client);
-                    System.out.println(ManagementFactory.getRuntimeMXBean().getName() + ":started");
+                    logger.info(ManagementFactory.getRuntimeMXBean().getName() + ":started");
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    logger.error("join",e);
                 }
             }
         }).start();
@@ -35,9 +39,9 @@ public class SingleInstance {
             line = line.trim();
             if ("r".equals(line)) {
                 List<String> list = client.getChildren().forPath("/");
-                System.out.println("getChildren:"+list);
+                logger.info("getChildren:"+list);
             }else if("e".equals(line)){
-                System.out.println("exit");
+                logger.info("exit");
             }
         }
     }
@@ -47,7 +51,7 @@ public class SingleInstance {
         for (; ; ) {
             try {
                 client.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL).forPath(path);
-                System.out.println("create success");
+                logger.info("create success");
                 return;
             } catch (KeeperException.NodeExistsException ignore) {
                 try {
@@ -62,17 +66,17 @@ public class SingleInstance {
                     };
                     Stat stat = client.checkExists().usingWatcher(watcher).forPath(path);
                     if (stat != null) {
-                        System.out.println("wait delete");
+                        logger.info("wait delete");
                         latch.await();
                     }
                 } catch (InterruptedException e) {
                     throw e;
                 } catch (Exception e) {
                     Thread.sleep(5000);
-                    System.out.println("checkExists error:" + e.getMessage());
+                    logger.info("checkExists error:" + e.getMessage());
                 }
             } catch (Exception e) {
-                System.out.println("create error:" + e.getMessage());
+                logger.info("create error:" + e.getMessage());
                 Thread.sleep(5000);
             }
         }

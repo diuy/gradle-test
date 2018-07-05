@@ -6,9 +6,14 @@ import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.state.ConnectionState;
 import org.apache.curator.framework.state.ConnectionStateListener;
 import org.apache.curator.retry.ExponentialBackoffRetry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Connector {
+    private final static Logger logger = LoggerFactory.getLogger(Connector.class);
+
     public static CuratorFramework newClient(){
+
         RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 4);//刚开始重试间隔为1秒，之后重试间隔逐渐增加，最多重试不超过三次
 
         //第二种方式
@@ -21,7 +26,7 @@ public class Connector {
         client.getConnectionStateListenable().addListener(new ConnectionStateListener() {
             @Override
             public void stateChanged(CuratorFramework client, ConnectionState newState) {
-                System.out.println("state:"+client.getZookeeperClient().getCurrentConnectionString()+","+newState);
+                logger.warn("state:"+client.getZookeeperClient().getCurrentConnectionString()+","+newState);
             }
         });
         client.start();
