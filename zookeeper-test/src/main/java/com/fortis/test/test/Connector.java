@@ -19,7 +19,7 @@ public class Connector {
         //第二种方式
         CuratorFramework client = CuratorFrameworkFactory.builder().namespace("xc")
                 .connectString("172.20.11.115:2181,172.20.11.114:2181,172.20.11.116:2181")
-                .sessionTimeoutMs(5000)//会话超时时间
+                .sessionTimeoutMs(10000)//会话超时时间
                 .connectionTimeoutMs(5000)//连接超时时间
                 .retryPolicy(retryPolicy)
                 .build();
