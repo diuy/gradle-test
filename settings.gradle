@@ -1,0 +1,4 @@
+rootProject.name = 'gradle-test'
+include 'zookeeper-test'
+include 'canal-test'
+
