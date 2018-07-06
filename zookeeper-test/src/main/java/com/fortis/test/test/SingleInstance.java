@@ -27,7 +27,7 @@ public class SingleInstance {
                     join(client);
                     logger.info(ManagementFactory.getRuntimeMXBean().getName() + ":started");
                 } catch (InterruptedException e) {
-                    logger.error("join", e);
+                    logger.error("join",e);
                 }
             }
         }).start();
@@ -36,16 +36,12 @@ public class SingleInstance {
 
         String line;
         while ((line = in.readLine()) != null) {
-            try {
-                line = line.trim();
-                if ("r".equals(line)) {
-                    List<String> list = client.getChildren().forPath("/");
-                    logger.info("getChildren:" + list);
-                } else if ("e".equals(line)) {
-                    logger.info("exit");
-                }
-            } catch (Exception e) {
-                logger.error("getChildren error:", e);
+            line = line.trim();
+            if ("r".equals(line)) {
+                List<String> list = client.getChildren().forPath("/");
+                logger.info("getChildren:"+list);
+            }else if("e".equals(line)){
+                logger.info("exit");
             }
         }
     }
