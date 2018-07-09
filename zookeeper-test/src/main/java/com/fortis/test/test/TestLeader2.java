@@ -83,6 +83,7 @@ public class TestLeader2 {
                             continue;
                         stop();//确认不是自己创建的，停止当前在运行的
                         latch.await();
+                        logger.info("acquire: data state changed");
                         //在等到了节点事件变化后，（网络变化，节点消失，数据修改等），先等待10秒再尝试创建，
                         //给一段时间给Leader尝试回复
                         CountDownLatch latch2 = new CountDownLatch(1);
