@@ -15,6 +15,7 @@ public class App {
 
     public static void main(String[] args) throws Exception {
         client = Connector.newClient();
+        client.create().forPath("dd");
         watch("/1");
 
         System.in.read();
