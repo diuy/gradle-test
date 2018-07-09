@@ -13,6 +13,9 @@ import java.util.Arrays;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 
+/**
+ * 一旦有新的状态变化，或网络变化就会先停止服务再次尝试创建
+ */
 public class TestLeader {
     private static CuratorFramework client;
     private final static Logger logger = LoggerFactory.getLogger(TestLeader.class);

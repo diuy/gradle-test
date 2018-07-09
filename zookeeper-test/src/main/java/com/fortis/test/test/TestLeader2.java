@@ -12,7 +12,11 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
+/**
+ * 创建成功后确认不能再次创建后 停止
+ */
 public class TestLeader2 {
     private static CuratorFramework client;
     private final static Logger logger = LoggerFactory.getLogger(TestLeader2.class);
@@ -22,7 +26,7 @@ public class TestLeader2 {
     private static volatile boolean closed = false;
     private static volatile CountDownLatch downLatch;
 
-    @SuppressWarnings("All")
+    //@SuppressWarnings("All")
     public static void main(String[] args) throws IOException, InterruptedException {
         data = UUID.randomUUID().toString().getBytes();
         client = Connector.newClient();
@@ -65,7 +69,7 @@ public class TestLeader2 {
             } catch (KeeperException.NodeExistsException ignore) {
                 logger.info("acquire: node existed");
                 try {
-                    CountDownLatch latch = new CountDownLatch(1);
+                    final CountDownLatch  latch = new CountDownLatch(1);
                     byte[] d = client.getData().usingWatcher(new CuratorWatcher() {
                         @Override
                         public void process(WatchedEvent event) throws Exception {
@@ -79,6 +83,13 @@ public class TestLeader2 {
                             continue;
                         stop();//确认不是自己创建的，停止当前在运行的
                         latch.await();
+                        //在等到了节点事件变化后，（网络变化，节点消失，数据修改等），先等待10秒再尝试创建，
+                        //给一段时间给Leader尝试回复
+                        CountDownLatch latch2 = new CountDownLatch(1);
+                        downLatch = latch2;
+                        if (closed)
+                            continue;
+                        latch2.await(10, TimeUnit.SECONDS);
                     } else {
                         start();//已经是自己创建的，再次启动
                         logger.info("acquire: data is created by myself");
