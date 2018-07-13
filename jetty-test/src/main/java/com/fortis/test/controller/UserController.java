@@ -11,9 +11,14 @@ public class UserController {
     private User user;
 
     @RequestMapping("/test")
-    public String logTest() {
+    public String test() {
         return user.getName() + "->" + user.getAge();
     }
+    @RequestMapping("/user")
+    public User getUser(){
+        return user;
+    }
+
 
     public UserController(){
         System.out.println("######create TestController");
