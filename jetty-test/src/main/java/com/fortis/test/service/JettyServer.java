@@ -6,16 +6,22 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.support.XmlWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
 @Service
+@DependsOn("testServer")
 public class JettyServer implements InitializingBean, DisposableBean, ApplicationContextAware {
     private ApplicationContext applicationContext;
     private Server server;
+
+    @Autowired
+    TestServer testServer;
 
 
     @Override
@@ -34,11 +40,14 @@ public class JettyServer implements InitializingBean, DisposableBean, Applicatio
         server = new Server(8080);
         server.setHandler(handler);
         server.start();
+
+        System.out.println("JettyServer afterPropertiesSet");
     }
 
     @Override
     public void destroy() throws Exception {
         server.stop();
+        System.out.println("JettyServer destroy");
     }
 
     @Override
