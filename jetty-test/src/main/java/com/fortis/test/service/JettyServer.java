@@ -1,6 +1,7 @@
 package com.fortis.test.service;
 
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.springframework.beans.BeansException;
@@ -30,13 +31,14 @@ public class JettyServer implements InitializingBean, DisposableBean, Applicatio
         servletApplicationContext.setConfigLocation("classpath:spring-servlet.xml");
         servletApplicationContext.setParent(this.applicationContext);
 
-        ServletHolder servlet = new ServletHolder(new DispatcherServlet(servletApplicationContext));
+       ServletHolder servlet = new ServletHolder(new DispatcherServlet(servletApplicationContext));
+        // ServletHolder servlet = new ServletHolder(new DefaultServlet());
 
         ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
         handler.setContextPath("/");
         handler.addServlet(servlet, "/");
-        handler.setResourceBase("."); //设置静态资源目录
-
+        handler.setResourceBase("webapp"); //设置静态资源目录
+      //  handler.setWelcomeFiles(new String[]{"index.html"});
         server = new Server(8080);
         server.setHandler(handler);
         server.start();

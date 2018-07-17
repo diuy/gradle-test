@@ -21,8 +21,11 @@
     <!--清空线程本地存储的Session-->
 
     <!--<mvc:default-servlet-handler />-->
+    <!--<mvc:view-controller path="/" view-name="/index.html"/>-->
+    <mvc:view-controller path="/" view-name="redirect:/index.html"/>
+
 
     <!--<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" p:prefix="/" p:suffix=".jsp"/>-->
-    <mvc:resources mapping="/t/**"  location="/" />
+    <mvc:resources mapping="/**"  location="/" />
     <!--<mvc:default-servlet-handler/>-->
 </beans>
