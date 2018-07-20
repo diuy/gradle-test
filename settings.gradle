@@ -3,4 +3,5 @@ include 'zookeeper-test'
 include 'canal-test'
 include 'kafka-test'
 include 'jetty-test'
+include 'jetty-embed'
 

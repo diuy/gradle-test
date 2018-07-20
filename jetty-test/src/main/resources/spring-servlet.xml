@@ -6,6 +6,7 @@
 
     <!--<import resource="spring.xml"/>-->
     <context:component-scan base-package="com.fortis.test.controller"/>
+
     <mvc:annotation-driven>
         <mvc:message-converters> <!-- 不使用默认配置 -->
             <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
