@@ -39,9 +39,13 @@ public class Produce {
                 key = line;
                 value = "";
             }
-
-            producer.send(new ProducerRecord<>("test001", key, value));
-            System.out.println(key+"->"+value);
+            if("0".equals(key)){
+                producer.send(new ProducerRecord<>("doctor-state", key, value));
+                System.out.println("doctor-state        "+"->"+value);
+            }else if("1".equals(key)){
+                producer.send(new ProducerRecord<>("doctor-change-notice", key, value));
+                System.out.println("doctor-change-notice"+"->"+value);
+            }
         }
 
         producer.close();
