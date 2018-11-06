@@ -22,19 +22,24 @@ public class CreateProto {
     def mysql = Sql.newInstance(mysqlUrl, user, password, driver)
     Jedis jedis = new Jedis(new URI(redisUrl))
 
-// Hash
-// key drug:store:sell:store_id
-// value drug_id->sell detail (json)
+    // Hash
+    // key drug:store:sell:store_id
+    // value drug_id->sell detail (json)
     def KEY_STORE_SELL = "drug:store:sell:"
 
-// Hash
-// key drug:base:
-// value drug_id->drug detail (json)
+    // Hash
+    // key drug:chain:sell:chain_id
+    // value drug_id->sell detail (json)
+    def KEY_CHAIN_SELL = "drug:chain:sell:"
+
+    // Hash
+    // key drug:base:
+    // value drug_id->drug detail (json)
     def KEY_BASE = "drug:base:"
 
-// Set
-// key drug:cat:cat_id
-// values drug_id
+    // Set
+    // key drug:cat:cat_id
+    // values drug_id
     def KEY_DRUG_CAT = "drug:cat:"
 
 
@@ -93,9 +98,9 @@ public class CreateProto {
                 bs.addDrugSell(b)
             }
             DrugSells drugSells = bs.build()
-            def k = (KEY_STORE_SELL + id).getBytes()
+            def k = (KEY_CHAIN_SELL + id).getBytes()
             def ck = (m.key as String).getBytes()
-            if(id==3 &&m.key==1240){
+            if (id == 3 && m.key == 1240) {
                 println BaseEncoding.base16().encode(drugSells.toByteArray())
             }
             pipeline.hset(k, ck, drugSells.toByteArray())
