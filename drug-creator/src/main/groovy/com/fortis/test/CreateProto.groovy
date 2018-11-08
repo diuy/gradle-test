@@ -39,6 +39,11 @@ public class CreateProto {
     def KEY_DRUG_CAT = "drug:cat:"
 
 
+    // Hash
+    // key drug:type:drug_id
+    // values drug_id->1
+    def KEY_DRUG_TYPE = "drug:type:"
+
     def drugMax = 50000//药品数量
     def storeDrugMax = 3000//每个药店的药品数量
     def storeMax = 10000//药店数量
@@ -48,7 +53,7 @@ public class CreateProto {
     def sql2 = '''SELECT drug_id FROM b_drug WHERE cate_id1 = ?'''
     def sql3 = '''SELECT * FROM b_chain_drug WHERE chain_id =? ORDER BY drug_id'''
     def sql4 = '''SELECT chain_id FROM b_chain_drug GROUP BY chain_id'''
-
+    def sql5 = '''SELECT drug_id FROM b_drug WHERE drug_id > ? AND `type`='中成药' LIMIT 2000'''
     public void createCategory() {
         def categories = mysql.rows(sql1)
         def pipeline = jedis.pipelined()
@@ -63,6 +68,21 @@ public class CreateProto {
             pipeline.sadd(KEY_DRUG_CAT + cate_id, ids as String[])
         }
         pipeline.sync()
+    }
+
+    public void createType(){
+        long id = 0
+        while (true){
+            def drugs = mysql.rows(sql5,id)
+            if(drugs.isEmpty())
+                break
+            def pipeline = jedis.pipelined()
+            for (def drug:drugs){
+                id = drug.get("drug_id") as Long
+                pipeline.hset(KEY_DRUG_TYPE,id as String,"\u0008\u0001")
+            }
+            pipeline.sync()
+        }
     }
 
     private void createSell(List<GroovyRowResult> sells, Long id) {
@@ -137,6 +157,7 @@ public class CreateProto {
     public static void main(String[] args) {
         CreateProto createProto = new CreateProto()
         createProto.readConfig()
+        createProto.createType()
         createProto.createCategory()
         createProto.createChainSell()
     }
