@@ -1956,9 +1956,9 @@ public final class DrugProto {
      *is_controllpin 是否是控销 0
      * </pre>
      *
-     * <code>int32 controllpin = 5;</code>
+     * <code>int32 controll = 5;</code>
      */
-    int getControllpin();
+    int getControll();
 
     /**
      * <pre>
@@ -2000,7 +2000,7 @@ public final class DrugProto {
       spec_ = "";
       price_ = 0F;
       rcmd_ = 0;
-      controllpin_ = 0;
+      controll_ = 0;
       type_ = 0;
       highSale_ = 0;
     }
@@ -2052,7 +2052,7 @@ public final class DrugProto {
             }
             case 40: {
 
-              controllpin_ = input.readInt32();
+              controll_ = input.readInt32();
               break;
             }
             case 48: {
@@ -2178,17 +2178,17 @@ public final class DrugProto {
       return rcmd_;
     }
 
-    public static final int CONTROLLPIN_FIELD_NUMBER = 5;
-    private int controllpin_;
+    public static final int CONTROLL_FIELD_NUMBER = 5;
+    private int controll_;
     /**
      * <pre>
      *is_controllpin 是否是控销 0
      * </pre>
      *
-     * <code>int32 controllpin = 5;</code>
+     * <code>int32 controll = 5;</code>
      */
-    public int getControllpin() {
-      return controllpin_;
+    public int getControll() {
+      return controll_;
     }
 
     public static final int TYPE_FIELD_NUMBER = 6;
@@ -2243,8 +2243,8 @@ public final class DrugProto {
       if (rcmd_ != 0) {
         output.writeInt32(4, rcmd_);
       }
-      if (controllpin_ != 0) {
-        output.writeInt32(5, controllpin_);
+      if (controll_ != 0) {
+        output.writeInt32(5, controll_);
       }
       if (type_ != 0) {
         output.writeInt32(6, type_);
@@ -2276,9 +2276,9 @@ public final class DrugProto {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(4, rcmd_);
       }
-      if (controllpin_ != 0) {
+      if (controll_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(5, controllpin_);
+          .computeInt32Size(5, controll_);
       }
       if (type_ != 0) {
         size += com.google.protobuf.CodedOutputStream
@@ -2314,8 +2314,8 @@ public final class DrugProto {
               other.getPrice()));
       result = result && (getRcmd()
           == other.getRcmd());
-      result = result && (getControllpin()
-          == other.getControllpin());
+      result = result && (getControll()
+          == other.getControll());
       result = result && (getType()
           == other.getType());
       result = result && (getHighSale()
@@ -2341,8 +2341,8 @@ public final class DrugProto {
           getPrice());
       hash = (37 * hash) + RCMD_FIELD_NUMBER;
       hash = (53 * hash) + getRcmd();
-      hash = (37 * hash) + CONTROLLPIN_FIELD_NUMBER;
-      hash = (53 * hash) + getControllpin();
+      hash = (37 * hash) + CONTROLL_FIELD_NUMBER;
+      hash = (53 * hash) + getControll();
       hash = (37 * hash) + TYPE_FIELD_NUMBER;
       hash = (53 * hash) + getType();
       hash = (37 * hash) + HIGHSALE_FIELD_NUMBER;
@@ -2493,7 +2493,7 @@ public final class DrugProto {
 
         rcmd_ = 0;
 
-        controllpin_ = 0;
+        controll_ = 0;
 
         type_ = 0;
 
@@ -2529,7 +2529,7 @@ public final class DrugProto {
         result.spec_ = spec_;
         result.price_ = price_;
         result.rcmd_ = rcmd_;
-        result.controllpin_ = controllpin_;
+        result.controll_ = controll_;
         result.type_ = type_;
         result.highSale_ = highSale_;
         onBuilt();
@@ -2593,8 +2593,8 @@ public final class DrugProto {
         if (other.getRcmd() != 0) {
           setRcmd(other.getRcmd());
         }
-        if (other.getControllpin() != 0) {
-          setControllpin(other.getControllpin());
+        if (other.getControll() != 0) {
+          setControll(other.getControll());
         }
         if (other.getType() != 0) {
           setType(other.getType());
@@ -2834,27 +2834,27 @@ public final class DrugProto {
         return this;
       }
 
-      private int controllpin_ ;
+      private int controll_ ;
       /**
        * <pre>
        *is_controllpin 是否是控销 0
        * </pre>
        *
-       * <code>int32 controllpin = 5;</code>
+       * <code>int32 controll = 5;</code>
        */
-      public int getControllpin() {
-        return controllpin_;
+      public int getControll() {
+        return controll_;
       }
       /**
        * <pre>
        *is_controllpin 是否是控销 0
        * </pre>
        *
-       * <code>int32 controllpin = 5;</code>
+       * <code>int32 controll = 5;</code>
        */
-      public Builder setControllpin(int value) {
+      public Builder setControll(int value) {
 
-        controllpin_ = value;
+        controll_ = value;
         onChanged();
         return this;
       }
@@ -2863,11 +2863,11 @@ public final class DrugProto {
        *is_controllpin 是否是控销 0
        * </pre>
        *
-       * <code>int32 controllpin = 5;</code>
+       * <code>int32 controll = 5;</code>
        */
-      public Builder clearControllpin() {
+      public Builder clearControll() {
 
-        controllpin_ = 0;
+        controll_ = 0;
         onChanged();
         return this;
       }
@@ -3811,12 +3811,12 @@ public final class DrugProto {
       "\022\n\ncommonName\030\002 \001(\t\022\023\n\013companyName\030\003 \001(\t" +
       "\022\022\n\npictureUrl\030\004 \001(\t\022\013\n\003otc\030\t \001(\005\022\016\n\006dos" +
       "age\030\005 \001(\t\022\022\n\napprNumber\030\006 \001(\t\022\021\n\tpresUsa" +
-      "ge\030\007 \001(\t\022\023\n\013presMatters\030\010 \001(\t\"z\n\010DrugSel" +
+      "ge\030\007 \001(\t\022\023\n\013presMatters\030\010 \001(\t\"w\n\010DrugSel" +
       "l\022\016\n\006sellId\030\001 \001(\003\022\014\n\004spec\030\002 \001(\t\022\r\n\005price" +
-      "\030\003 \001(\002\022\014\n\004rcmd\030\004 \001(\005\022\023\n\013controllpin\030\005 \001(" +
-      "\005\022\014\n\004type\030\006 \001(\005\022\020\n\010highSale\030\007 \001(\005\">\n\tDru" +
-      "gSells\0221\n\010drugSell\030\001 \003(\0132\037.com.fortis.dr" +
-      "ug.proto.DrugSellB\002H\001b\006proto3"
+      "\030\003 \001(\002\022\014\n\004rcmd\030\004 \001(\005\022\020\n\010controll\030\005 \001(\005\022\014" +
+      "\n\004type\030\006 \001(\005\022\020\n\010highSale\030\007 \001(\005\">\n\tDrugSe" +
+      "lls\0221\n\010drugSell\030\001 \003(\0132\037.com.fortis.drug." +
+      "proto.DrugSellB\002H\001b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -3841,7 +3841,7 @@ public final class DrugProto {
     internal_static_com_fortis_drug_proto_DrugSell_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_com_fortis_drug_proto_DrugSell_descriptor,
-        new String[] { "SellId", "Spec", "Price", "Rcmd", "Controllpin", "Type", "HighSale", });
+        new String[] { "SellId", "Spec", "Price", "Rcmd", "Controll", "Type", "HighSale", });
     internal_static_com_fortis_drug_proto_DrugSells_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_com_fortis_drug_proto_DrugSells_fieldAccessorTable = new

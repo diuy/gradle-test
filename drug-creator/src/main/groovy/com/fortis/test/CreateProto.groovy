@@ -1,26 +1,22 @@
 package com.fortis.test
 
-import com.fortis.drug.proto.DrugProto
-import com.google.common.io.BaseEncoding
+import com.fortis.drug.proto.DrugProto.DrugSell
+import com.fortis.drug.proto.DrugProto.DrugSells
 import groovy.sql.GroovyRowResult
 import groovy.sql.Sql
 import redis.clients.jedis.Jedis
-import com.fortis.drug.proto.DrugProto.DrugDetail
-import com.fortis.drug.proto.DrugProto.DrugSells
-import com.fortis.drug.proto.DrugProto.DrugSell
-
 
 public class CreateProto {
 
-    def redisUrl = "redis://172.20.11.114:6379/10"
-    def mysqlUrl = 'jdbc:mysql://172.20.1.233/drugdb?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&serverTimezone=GMT&tinyInt1isBit=false'
-    def user = 'root'
-    def password = 'Pass1234'
-    def driver = 'com.mysql.jdbc.Driver'
+    String redisUrl = "redis://172.20.11.114:6379/10"
+    String mysqlUrl = 'jdbc:mysql://172.20.1.233/drugdb?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&serverTimezone=GMT&tinyInt1isBit=false'
+    String user = 'root'
+    String password = 'Pass1234'
+    String driver = 'com.mysql.jdbc.Driver'
 
 
-    def mysql = Sql.newInstance(mysqlUrl, user, password, driver)
-    Jedis jedis = new Jedis(new URI(redisUrl))
+    Sql mysql;//= Sql.newInstance(mysqlUrl, user, password, driver)
+    Jedis jedis;//= new Jedis(new URI(redisUrl))
 
     // Hash
     // key drug:store:sell:store_id
@@ -92,7 +88,7 @@ public class CreateProto {
                         .setSpec(drug.get("spec") as String)
                         .setPrice(drug.get("price") as Float)
                         .setRcmd(drug.get("is_rcmd") as Integer)
-                        .setControllpin(drug.get("is_controllpin") as Integer)
+                        .setControll(drug.get("is_controllpin") as Integer)
                         .setType(drug.get("drug_type") as Integer)
                         .setHighSale(drug.get("is_high_sale") as Integer)
                 bs.addDrugSell(b)
@@ -100,9 +96,9 @@ public class CreateProto {
             DrugSells drugSells = bs.build()
             def k = (KEY_CHAIN_SELL + id).getBytes()
             def ck = (m.key as String).getBytes()
-            if (id == 3 && m.key == 1240) {
-                println BaseEncoding.base16().encode(drugSells.toByteArray())
-            }
+//            if (id == 3 && m.key == 1240) {
+//                println BaseEncoding.base16().encode(drugSells.toByteArray())
+//            }
             pipeline.hset(k, ck, drugSells.toByteArray())
         }
         pipeline.sync()
@@ -117,8 +113,30 @@ public class CreateProto {
         }
     }
 
+    private void readConfig() {
+        InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("config.properties")
+        if (inputStream == null) {
+            println "read config failed"
+            return
+        }
+        Properties properties = new Properties()
+        properties.load(inputStream)
+        redisUrl = properties.get("redisUrl", redisUrl)
+        mysqlUrl = properties.get("mysqlUrl", mysqlUrl)
+        user = properties.get("user", user)
+        password = properties.get("password", password)
+        println "redisUrl  :${redisUrl}"
+        println "mysqlUrl  :${mysqlUrl}"
+        println "user  :${user}"
+        println "password  :${password}"
+
+        mysql = Sql.newInstance(mysqlUrl, user, password, driver)
+        jedis = new Jedis(new URI(redisUrl))
+    }
+
     public static void main(String[] args) {
         CreateProto createProto = new CreateProto()
+        createProto.readConfig()
         createProto.createCategory()
         createProto.createChainSell()
     }
