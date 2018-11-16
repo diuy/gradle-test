@@ -38,7 +38,6 @@ public class CreateProto {
     // values drug_id
     def KEY_DRUG_CAT = "drug:cat:"
 
-
     // Hash
     // key drug:type:drug_id
     // values drug_id->1
@@ -53,7 +52,12 @@ public class CreateProto {
     def sql2 = '''SELECT drug_id FROM b_drug WHERE cate_id1 = ?'''
     def sql3 = '''SELECT * FROM b_chain_drug WHERE chain_id =? ORDER BY drug_id'''
     def sql4 = '''SELECT chain_id FROM b_chain_drug GROUP BY chain_id'''
+
     def sql5 = '''SELECT drug_id FROM b_drug WHERE drug_id > ? AND `type`='中成药' LIMIT 2000'''
+
+    def sql6 = '''SELECT * FROM b_store_drug WHERE store_id =? ORDER BY drug_id'''
+    def sql7 = '''SELECT store_id FROM b_store_drug GROUP BY store_id'''
+
     public void createCategory() {
         def categories = mysql.rows(sql1)
         def pipeline = jedis.pipelined()
@@ -70,22 +74,22 @@ public class CreateProto {
         pipeline.sync()
     }
 
-    public void createType(){
+    public void createType() {
         long id = 0
-        while (true){
-            def drugs = mysql.rows(sql5,id)
-            if(drugs.isEmpty())
+        while (true) {
+            def drugs = mysql.rows(sql5, id)
+            if (drugs.isEmpty())
                 break
             def pipeline = jedis.pipelined()
-            for (def drug:drugs){
+            for (def drug : drugs) {
                 id = drug.get("drug_id") as Long
-                pipeline.hset(KEY_DRUG_TYPE,id as String,"\u0008\u0001")
+                pipeline.hset(KEY_DRUG_TYPE, id as String, "\u0008\u0001")
             }
             pipeline.sync()
         }
     }
 
-    private void createSell(List<GroovyRowResult> sells, Long id) {
+    private void createSell(List<GroovyRowResult> sells, Long id, int type) {
         Map<Long, List<Map>> drugMap = [:]
         for (def sell : sells) {
             Long drugId = sell.get("drug_id") as Long
@@ -94,7 +98,10 @@ public class CreateProto {
                 s = new ArrayList<Map>()
                 drugMap.put(drugId, s)
             } else {
-                println "drug id multiple  chain_id:${id}, drug_id:${drugId}"
+                if (type == 0)
+                    println "drug id multiple  store_id:${id}, drug_id:${drugId}"
+                else
+                    println "drug id multiple  chain_id:${id}, drug_id:${drugId}"
             }
             s.add(sell)
         }
@@ -105,7 +112,7 @@ public class CreateProto {
             for (def drug : drugs) {
                 def b = DrugSell.newBuilder()
                         .setSellId(drug.get("id") as Long)
-                        .setSpec(drug.get("spec") as String)
+                        .setSpec(drug.get("spec")==null?"":drug.get("spec") as String)
                         .setPrice(drug.get("price") as Float)
                         .setRcmd(drug.get("is_rcmd") as Integer)
                         .setControll(drug.get("is_controllpin") as Integer)
@@ -114,7 +121,12 @@ public class CreateProto {
                 bs.addDrugSell(b)
             }
             DrugSells drugSells = bs.build()
-            def k = (KEY_CHAIN_SELL + id).getBytes()
+            byte[] k
+            if (type == 0)
+                k = (KEY_STORE_SELL + id).getBytes()
+            else
+                k = (KEY_CHAIN_SELL + id).getBytes()
+
             def ck = (m.key as String).getBytes()
 //            if (id == 3 && m.key == 1240) {
 //                println BaseEncoding.base16().encode(drugSells.toByteArray())
@@ -129,7 +141,16 @@ public class CreateProto {
         for (def r : r1) {
             def chainId = r.get("chain_id") as Long
             def r2 = mysql.rows(sql3, chainId)
-            createSell(r2, chainId)
+            createSell(r2, chainId, 1)
+        }
+    }
+
+    public void createStoreSell() {
+        def r1 = mysql.rows(sql7)
+        for (def r : r1) {
+            def store_id = r.get("store_id") as Long
+            def r2 = mysql.rows(sql6, store_id)
+            createSell(r2, store_id, 0)
         }
     }
 
@@ -159,7 +180,9 @@ public class CreateProto {
         createProto.readConfig()
         createProto.createType()
         createProto.createCategory()
-        createProto.createChainSell()
+       // createProto.createChainSell()
+        createProto.createStoreSell()
+
     }
 
 
