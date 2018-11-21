@@ -7,4 +7,5 @@ include 'jetty-embed'
 include 'java-test'
 include 'antlr-test'
 include 'drug-creator'
+include 'lucene-test'
 
