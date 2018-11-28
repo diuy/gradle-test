@@ -44,6 +44,7 @@ class Test3 {
                 String short_name1 = result.short_name1 as String
                 id = drug_id
                 Document doc = new Document()
+
                 doc.add(new StringField("id", drug_id as String, Field.Store.YES))
                 if (cn_name) doc.add(new TextField("cn_name", cn_name, Field.Store.YES))
                 if (common_name) doc.add(new TextField("common_name", common_name, Field.Store.YES))
@@ -68,17 +69,19 @@ class Test3 {
         println "index over use:${t2 - t1}"
         writer.close()
     }
+   static   Analyzer analyzer = new SmartChineseAnalyzer()
+    static  QueryParser parser = new MultiFieldQueryParser(["cn_name", "common_name", "short_name1"] as String[], analyzer)
 
     static void search(IndexSearcher is, String q) {
         // 实例化分析器
         //     Analyzer analyzer = new StandardAnalyzer()
-        Analyzer analyzer = new SmartChineseAnalyzer()
+       // Analyzer analyzer = new SmartChineseAnalyzer()
 
         // 建立查询解析器
         /**
          * 第一个参数是要查询的字段； 第二个参数是分析器Analyzer
          */
-        QueryParser parser = new MultiFieldQueryParser(["cn_name", "common_name", "short_name1"] as String[], analyzer)
+//        QueryParser parser = new MultiFieldQueryParser(["cn_name", "common_name", "short_name1"] as String[], analyzer)
         // 根据传进来的p查找
         Query query = parser.parse(q)
         // 计算索引开始时间
@@ -94,6 +97,7 @@ class Test3 {
 
         for (ScoreDoc scoreDoc : hits.scoreDocs) {
             Document doc = is.doc(scoreDoc.doc)
+
             println doc
 //            System.out.println("id:${doc.get("id")} common_name:${doc.get("common_name")}")
         }

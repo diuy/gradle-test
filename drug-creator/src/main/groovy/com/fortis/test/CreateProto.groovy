@@ -5,6 +5,7 @@ import com.fortis.drug.proto.DrugProto.DrugSells
 import groovy.sql.GroovyRowResult
 import groovy.sql.Sql
 import redis.clients.jedis.Jedis
+import redis.clients.jedis.exceptions.JedisConnectionException
 
 public class CreateProto {
 
@@ -141,7 +142,13 @@ public class CreateProto {
         for (def r : r1) {
             def chainId = r.get("chain_id") as Long
             def r2 = mysql.rows(sql3, chainId)
-            createSell(r2, chainId, 1)
+            try{
+                createSell(r2, chainId, 1)
+            }catch (JedisConnectionException e){
+                println "jedis 超时"+e.getMessage()
+                jedis = new Jedis(new URI(redisUrl))
+                createSell(r2, chainId, 1)
+            }
         }
     }
 
@@ -150,7 +157,13 @@ public class CreateProto {
         for (def r : r1) {
             def store_id = r.get("store_id") as Long
             def r2 = mysql.rows(sql6, store_id)
-            createSell(r2, store_id, 0)
+            try{
+                createSell(r2, store_id, 0)
+            }catch (JedisConnectionException e){
+                println "jedis 超时"+e.getMessage()
+                jedis = new Jedis(new URI(redisUrl))
+                createSell(r2, store_id, 0)
+            }
         }
     }
 
@@ -180,7 +193,7 @@ public class CreateProto {
         createProto.readConfig()
         createProto.createType()
         createProto.createCategory()
-       // createProto.createChainSell()
+        createProto.createChainSell()
         createProto.createStoreSell()
 
     }
